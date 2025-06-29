@@ -34,22 +34,7 @@ function Navbar() {
             <ul className="flex flex-col md:flex-row md:space-x-0">
               <li>
                 <Link
-                  to="/dashboard"
-                  className="
-                    flex items-center
-                    py-2 px-5
-                    md:py-5
-                    text-white no-underline
-                    hover:bg-white hover:text-black hover:rounded-none
-                    transition
-                  "
-                >
-                  Dashboard
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/consumo"
+                  to="/ConsumoDiario"
                   className="
                     flex items-center
                     py-2 px-5
@@ -60,6 +45,21 @@ function Navbar() {
                   "
                 >
                   Consumo Diario
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/consumoMensual"
+                  className="
+                    flex items-center
+                    py-2 px-5
+                    md:py-5
+                    text-white no-underline
+                    hover:bg-white hover:text-black hover:rounded-none
+                    transition
+                  "
+                >
+                  Consumo Mensual
                 </Link>
               </li>
               <li>
