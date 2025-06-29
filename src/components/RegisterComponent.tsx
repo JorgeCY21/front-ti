@@ -1,0 +1,117 @@
+import { Link } from "react-router-dom";
+
+function RegisterComponent() {
+  return (
+    <section
+      className="min-h-screen bg-[#05222d] flex items-center justify-center py-10 px-4"
+      style={{ fontFamily: "'Poppins', sans-serif" }}
+    >
+      <div className="flex flex-col lg:flex-row w-full max-w-5xl bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Formulario */}
+        <div className="w-full lg:w-1/2 p-8 md:p-10">
+          <div className="text-center mb-6">
+            <img
+              src="https://cdn-icons-png.flaticon.com/512/1429/1429307.png"
+              alt="logo"
+              className="w-20 mx-auto mb-3"
+            />
+            <h4 className="text-xl font-semibold">Crea tu cuenta en Light for Life</h4>
+          </div>
+
+          <form>
+            <p className="text-gray-700 mb-4">Completa tus datos para registrarte</p>
+
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Nombre"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+              />
+            </div>
+
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Apellido"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+              />
+            </div>
+
+            <div className="mb-4">
+              <input
+                type="email"
+                placeholder="Correo electrónico"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+              />
+            </div>
+
+            <div className="mb-4">
+              <select
+                className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Selecciona tu distrito
+                </option>
+                <option value="miraflores">Miraflores</option>
+                <option value="sanisidro">San Isidro</option>
+                <option value="surco">Santiago de Surco</option>
+                <option value="jesusmaria">Jesús María</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <input
+                type="password"
+                placeholder="Contraseña"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+              />
+            </div>
+
+            <div className="mb-6">
+              <input
+                type="password"
+                placeholder="Repetir contraseña"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+              />
+            </div>
+
+            <div className="text-center mb-4">
+              <button
+                type="submit"
+                className="w-full bg-[#005766] text-white rounded-md py-2 hover:bg-[#00434f] transition"
+              >
+                Crear cuenta
+              </button>
+            </div>
+
+            <div className="flex items-center justify-center text-sm">
+              <p className="mr-2">¿Ya tienes una cuenta?</p>
+              <Link to="/login" className="text-[#dc2626] font-medium hover:underline">
+                Iniciar sesión
+              </Link>
+            </div>
+          </form>
+        </div>
+
+        {/* Imagen lateral */}
+        <div
+          className="
+            hidden lg:flex w-1/2
+            bg-gradient-to-r from-[#005766] via-[#0090aa] to-[#0096aa]
+            items-center justify-center text-white p-8
+          "
+        >
+          <div className="max-w-md">
+            <h4 className="text-2xl font-semibold mb-4">Únete a Light for Life</h4>
+            <p className="text-sm leading-relaxed">
+              Empieza a monitorear tu consumo eléctrico, recibe reportes personalizados y toma el control de tu energía.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default RegisterComponent;
