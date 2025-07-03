@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 function CalendarComponent() {
   const [selectedMonth, setSelectedMonth] = useState<number>(0); // Enero=0

@@ -1,84 +1,121 @@
-import { useState } from "react";
-
-interface Device {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-}
+import { useState, useEffect } from "react";
+import { useDevices } from "../hooks/useDevices";
+import { useAuth } from "../context/AuthContext";
+import { useDailyDevices } from "../hooks/useDailyDevices";
+import { useUpdateDailyDevices } from "../hooks/useUpdateDailyDevices";
+import { useDailyConsumptionsByDate } from "../hooks/useDailyConsumptionByDate";
+import dayjs from "dayjs";
 
 interface DevicesProps {
-  onAddDevice: (device: { id: number; name: string; hours: number }) => void;
+  onAddDevice?: (device: { id: string; name: string; hours: number }) => void;
 }
 
-const sampleDevices: Device[] = [
-  {
-    id: 1,
-    name: "Refrigerador",
-    description: "Mantiene tus alimentos frescos todo el día.",
-    image: "https://cdn-icons-png.flaticon.com/512/1046/1046869.png",
-  },
-  {
-    id: 2,
-    name: "Lavadora",
-    description: "Lava tu ropa eficientemente.",
-    image: "https://cdn-icons-png.flaticon.com/512/1046/1046908.png",
-  },
-  {
-    id: 3,
-    name: "Televisor",
-    description: "Entretenimiento en alta definición.",
-    image: "https://cdn-icons-png.flaticon.com/512/1680/1680920.png",
-  },
-  {
-    id: 4,
-    name: "Computadora",
-    description: "Para trabajo y ocio.",
-    image: "https://cdn-icons-png.flaticon.com/512/2292/2292140.png",
-  },
-];
-
 const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
-  const [usageHours, setUsageHours] = useState<{ [id: number]: string }>({});
+  const { user } = useAuth();
+  const { data: devices, isLoading, isError } = useDevices();
+  const registerDevicesMutation = useDailyDevices();
+  const updateDevicesMutation = useUpdateDailyDevices();
 
-  const handleHoursChange = (id: number, value: string) => {
-    setUsageHours((prev) => ({ ...prev, [id]: value }));
+  // Fecha de hoy en formato YYYY-MM-DD
+  const today = dayjs().format("YYYY-MM-DD");
+
+  // Obtén consumos previos
+  const { data: dailyConsumptions } = useDailyConsumptionsByDate(
+    user?.id!,
+    today
+  );
+
+  // Estados
+  const [hoursUseMap, setHoursUseMap] = useState<{ [deviceId: string]: string }>({});
+  const [dailyConsumptionMap, setDailyConsumptionMap] = useState<{ [deviceId: string]: string }>({});
+
+  // Cuando carga data previa, rellenar mapas
+  useEffect(() => {
+    if (dailyConsumptions) {
+      const hoursMap: { [deviceId: string]: string } = {};
+      const idMap: { [deviceId: string]: string } = {};
+
+      dailyConsumptions.forEach((c) => {
+        hoursMap[c.device_id] = String(c.hours_use);
+        idMap[c.device_id] = c.id;
+      });
+
+      setHoursUseMap(hoursMap);
+      setDailyConsumptionMap(idMap);
+    }
+  }, [dailyConsumptions]);
+
+  const handleChange = (deviceId: string, value: string) => {
+    setHoursUseMap((prev) => ({ ...prev, [deviceId]: value }));
   };
+
+  const handleSubmit = (deviceId: string) => {
+    const hours = Number(hoursUseMap[deviceId] ?? 0);
+    if (hours <= 0) {
+      alert("Ingresa un número válido de horas.");
+      return;
+    }
+
+    const existingConsumptionId = dailyConsumptionMap[deviceId];
+
+    if (existingConsumptionId) {
+      updateDevicesMutation.mutate({
+        id: existingConsumptionId,
+        hours_use: hours,
+      });
+    } else {
+      registerDevicesMutation.mutate(
+        {
+          user_id: user?.id!,
+          device_id: deviceId,
+          hours_use: hours,
+          is_active: true,
+        },
+        {
+          onSuccess: (data) => {
+            const createdId = data.data.id;
+            setDailyConsumptionMap((prev) => ({
+              ...prev,
+              [deviceId]: createdId,
+            }));
+          },
+        }
+      );
+    }
+
+    if (onAddDevice && devices) {
+      const device = devices.find((d) => d.id === deviceId);
+      if (device) {
+        onAddDevice({ id: device.id, name: device.name, hours });
+      }
+    }
+  };
+
+  if (isLoading) return <p>Cargando dispositivos...</p>;
+  if (isError) return <p>Error al cargar dispositivos</p>;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-      {sampleDevices.map((device) => (
-        <div
-          key={device.id}
-          className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between relative"
-        >
-          <img
-            src={device.image}
-            alt={device.name}
-            className="h-32 w-auto mx-auto mb-4"
-          />
-          <h3 className="text-lg font-semibold text-center">{device.name}</h3>
-          <p className="text-sm text-gray-500 text-center mb-4">
-            {device.description}
+      {devices?.map((device) => (
+        <div key={device.id} className="bg-white shadow p-4 rounded">
+          <img src={device.url} alt={device.name} className="h-32 w-auto mx-auto" />
+          <h3 className="text-center font-semibold">{device.name}</h3>
+          <p className="text-center text-sm text-gray-500">
+            Consumo: {device.consumption_kwh_h} kWh/h
           </p>
           <input
             type="number"
             min="0"
             placeholder="Horas al día"
-            value={usageHours[device.id] ?? ""}
-            onChange={(e) => handleHoursChange(device.id, e.target.value)}
-            className="w-full border border-gray-300 rounded-md px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-[#005766] mt-auto mb-2"
+            value={hoursUseMap[device.id] ?? ""}
+            onChange={(e) => handleChange(device.id, e.target.value)}
+            className="w-full border mt-2 px-3 py-2 rounded text-center"
           />
           <button
-            onClick={() => {
-              const hours = Number(usageHours[device.id] ?? 0);
-              if (hours > 0) {
-                onAddDevice({ id: device.id, name: device.name, hours });
-              }
-            }}
-            className="w-full flex items-center justify-center bg-[#005766] text-white rounded-md py-2 hover:bg-[#00434f] transition"
+            onClick={() => handleSubmit(device.id)}
+            className="w-full bg-[#005766] text-white mt-2 py-2 rounded hover:bg-[#00434f]"
           >
-            Añadir
+            Guardar
           </button>
         </div>
       ))}

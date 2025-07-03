@@ -1,6 +1,47 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useRegisterUser } from "../hooks/useRegisterUser";
+import { useDistricts } from "../hooks/useDistricts";
+import ErrorAlert from "../components/ErrorAlert";
 
 function RegisterComponent() {
+  const registerMutation = useRegisterUser();
+  const { data: districts} = useDistricts();
+
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    password: "",
+    repeatPassword: "",
+    district_id: 1,
+    username: "",
+    taste: ["tech", "sports", "reading"],
+    is_active: true,
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.repeatPassword) {
+      alert("Las contraseñas no coinciden");
+      return;
+    }
+
+    registerMutation.mutate({
+      ...formData,
+      // Elimina campo repeatPassword antes de enviar
+      repeatPassword: undefined,
+    } as any); // Puedes tipar mejor si separas los campos
+  };
+
   return (
     <section
       className="min-h-screen bg-[#05222d] flex items-center justify-center py-10 px-4"
@@ -15,15 +56,21 @@ function RegisterComponent() {
               alt="logo"
               className="w-20 mx-auto mb-3"
             />
-            <h4 className="text-xl font-semibold">Crea tu cuenta en Light for Life</h4>
+            <h4 className="text-xl font-semibold">
+              Crea tu cuenta en Light for Life
+            </h4>
           </div>
 
-          <form>
-            <p className="text-gray-700 mb-4">Completa tus datos para registrarte</p>
+          <form onSubmit={handleSubmit}>
+            <p className="text-gray-700 mb-4">
+              Completa tus datos para registrarte
+            </p>
 
             <div className="mb-4">
               <input
-                type="text"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
                 placeholder="Nombre"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
@@ -31,7 +78,9 @@ function RegisterComponent() {
 
             <div className="mb-4">
               <input
-                type="text"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
                 placeholder="Apellido"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
@@ -39,30 +88,48 @@ function RegisterComponent() {
 
             <div className="mb-4">
               <input
-                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Correo electrónico"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
             </div>
 
             <div className="mb-4">
+              <input
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                placeholder="Usuario"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+              />
+            </div>
+
+            <div className="mb-4">
               <select
+                name="district_id"
+                value={formData.district_id}
+                onChange={handleChange}
                 className="w-full border border-gray-300 rounded-md px-4 py-2 text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#005766]"
-                defaultValue=""
               >
                 <option value="" disabled>
                   Selecciona tu distrito
                 </option>
-                <option value="miraflores">Miraflores</option>
-                <option value="sanisidro">San Isidro</option>
-                <option value="surco">Santiago de Surco</option>
-                <option value="jesusmaria">Jesús María</option>
+                {districts?.map((district) => (
+                  <option key={district.id} value={district.id}>
+                    {district.name}
+                  </option>
+                ))}
               </select>
             </div>
 
             <div className="mb-4">
               <input
                 type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 placeholder="Contraseña"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
@@ -71,6 +138,9 @@ function RegisterComponent() {
             <div className="mb-6">
               <input
                 type="password"
+                name="repeatPassword"
+                value={formData.repeatPassword}
+                onChange={handleChange}
                 placeholder="Repetir contraseña"
                 className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
@@ -87,10 +157,23 @@ function RegisterComponent() {
 
             <div className="flex items-center justify-center text-sm">
               <p className="mr-2">¿Ya tienes una cuenta?</p>
-              <Link to="/login" className="text-[#dc2626] font-medium hover:underline">
+              <Link
+                to="/login"
+                className="text-[#dc2626] font-medium hover:underline"
+              >
                 Iniciar sesión
               </Link>
             </div>
+            {registerMutation.isPending && <p>Registrando...</p>}
+            {registerMutation.isSuccess && <p>¡Registro exitoso!</p>}
+            {registerMutation.isError && (
+              <ErrorAlert
+                message={
+                  (registerMutation.error as any)?.response?.data?.message ||
+                  "Ha ocurrido un error. Intenta nuevamente."
+                }
+              />
+            )}
           </form>
         </div>
 
@@ -103,9 +186,12 @@ function RegisterComponent() {
           "
         >
           <div className="max-w-md">
-            <h4 className="text-2xl font-semibold mb-4">Únete a Light for Life</h4>
+            <h4 className="text-2xl font-semibold mb-4">
+              Únete a Light for Life
+            </h4>
             <p className="text-sm leading-relaxed">
-              Empieza a monitorear tu consumo eléctrico, recibe reportes personalizados y toma el control de tu energía.
+              Empieza a monitorear tu consumo eléctrico, recibe reportes
+              personalizados y toma el control de tu energía.
             </p>
           </div>
         </div>
