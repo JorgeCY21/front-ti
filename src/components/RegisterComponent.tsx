@@ -6,7 +6,13 @@ import ErrorAlert from "../components/ErrorAlert";
 
 function RegisterComponent() {
   const registerMutation = useRegisterUser();
-  const { data: districts} = useDistricts();
+  const { data: districts } = useDistricts();
+
+  const errorTranslations: Record<string, string> = {
+    "Email already exists": "El correo electrónico ya está registrado.",
+    "Invalid password": "La contraseña no es válida.",
+    "User not found": "Usuario no encontrado.",
+  };
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -167,13 +173,13 @@ function RegisterComponent() {
             {registerMutation.isPending && <p>Registrando...</p>}
             {registerMutation.isSuccess && <p>¡Registro exitoso!</p>}
             {registerMutation.isError && (
+              
               <ErrorAlert
                 message={
-                  (registerMutation.error as any)?.response?.data?.message ||
-                  "Ha ocurrido un error. Intenta nuevamente."
+                  (registerMutation.error as any)?.response?.data?.message || "Ha ocurrido un error. Intenta nuevamente."
                 }
               />
-            )}
+            )}  
           </form>
         </div>
 
@@ -201,3 +207,11 @@ function RegisterComponent() {
 }
 
 export default RegisterComponent;
+
+{/*<ErrorAlert
+                message={
+                  errorTranslations[
+                    (registerMutation.error as any)?.response?.data?.message
+                  ] || "Ha ocurrido un error. Intenta nuevamente."
+                }
+              />*/}

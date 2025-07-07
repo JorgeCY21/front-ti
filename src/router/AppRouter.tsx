@@ -5,6 +5,9 @@ import Register from "../pages/Register";
 import Calculator from "../pages/Calculator";
 import MonthlyConsumptions from "../pages/MonthlyConsumptions";
 import PrivateRoute from "./PrivateRoute";
+import ResetPasswordComponent from "../components/ResetPasswordComponent";
+import VerifyCodeComponent from "../components/VerifyCodeComponent";
+import SetNewPasswordComponent from "../components/SetNewPasswordComponent";
 
 function AppRouter() {
   return (
@@ -13,6 +16,10 @@ function AppRouter() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/login/forgot-password" element={<ResetPasswordComponent/>}/>
+      <Route path="/verify-code" element={<VerifyCodeComponent/>}/>
+      <Route path="/reset-password" element={<SetNewPasswordComponent/>}/>
+
 
       {/* Protegidas */}
       <Route

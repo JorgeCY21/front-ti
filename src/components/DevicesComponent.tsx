@@ -5,12 +5,16 @@ import { useDailyDevices } from "../hooks/useDailyDevices";
 import { useUpdateDailyDevices } from "../hooks/useUpdateDailyDevices";
 import { useDailyConsumptionsByDate } from "../hooks/useDailyConsumptionByDate";
 import dayjs from "dayjs";
+import { useQueryClient } from "@tanstack/react-query";
+
+
 
 interface DevicesProps {
   onAddDevice?: (device: { id: string; name: string; hours: number }) => void;
 }
 
 const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { data: devices, isLoading, isError } = useDevices();
   const registerDevicesMutation = useDailyDevices();
@@ -26,8 +30,12 @@ const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
   );
 
   // Estados
-  const [hoursUseMap, setHoursUseMap] = useState<{ [deviceId: string]: string }>({});
-  const [dailyConsumptionMap, setDailyConsumptionMap] = useState<{ [deviceId: string]: string }>({});
+  const [hoursUseMap, setHoursUseMap] = useState<{
+    [deviceId: string]: string;
+  }>({});
+  const [dailyConsumptionMap, setDailyConsumptionMap] = useState<{
+    [deviceId: string]: string;
+  }>({});
 
   // Cuando carga data previa, rellenar mapas
   useEffect(() => {
@@ -59,10 +67,19 @@ const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
     const existingConsumptionId = dailyConsumptionMap[deviceId];
 
     if (existingConsumptionId) {
-      updateDevicesMutation.mutate({
-        id: existingConsumptionId,
-        hours_use: hours,
-      });
+      updateDevicesMutation.mutate(
+        {
+          id: existingConsumptionId,
+          hours_use: hours,
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({
+              queryKey: ["dailyConsumptions", user?.id, today],
+            });
+          },
+        }
+      );
     } else {
       registerDevicesMutation.mutate(
         {
@@ -78,6 +95,10 @@ const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
               ...prev,
               [deviceId]: createdId,
             }));
+            // Refrescar el resumen
+            queryClient.invalidateQueries({
+              queryKey: ["dailyConsumptions", user?.id, today],
+            });
           },
         }
       );
@@ -98,7 +119,11 @@ const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {devices?.map((device) => (
         <div key={device.id} className="bg-white shadow p-4 rounded">
-          <img src={device.url} alt={device.name} className="h-32 w-auto mx-auto" />
+          <img
+            src={device.url}
+            alt={device.name}
+            className="h-32 w-auto mx-auto"
+          />
           <h3 className="text-center font-semibold">{device.name}</h3>
           <p className="text-center text-sm text-gray-500">
             Consumo: {device.consumption_kwh_h} kWh/h

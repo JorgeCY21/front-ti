@@ -93,9 +93,9 @@ function LoginComponent(){
             </div>
 
             <div className="text-center mb-6">
-              <a href="#" className="text-sm text-gray-500 hover:text-gray-700">
+              <Link to="/login/forgot-password" className="text-sm text-gray-500 hover:text-gray-700">
                 ¿Olvidaste tu contraseña?
-              </a>
+              </Link>
             </div>
 
             <div className="flex items-center justify-center text-sm">
