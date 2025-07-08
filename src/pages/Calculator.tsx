@@ -3,6 +3,7 @@ import DevicesComponent from "../components/DevicesComponent";
 import Navbar from "../components/Navbar";
 import SearchComponent from "../components/SearchComponent";
 import { useAuth } from "../context/AuthContext";
+import ChatBotFloating from "../components/ChatBotFloating";
 
 function Calculator() {
   const { user } = useAuth();
@@ -23,6 +24,8 @@ function Calculator() {
           <CalculatorComponent userId={user?.id!} />
         </div>
       </div>
+      <ChatBotFloating />
+
     </div>
   );
 }

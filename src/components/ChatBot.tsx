@@ -1,81 +1,115 @@
-import { useState } from 'react';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 type Message = {
-  sender: 'user' | 'bot';
+  sender: "user" | "bot";
   text: string;
 };
 
 const ChatBot = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const saved = sessionStorage.getItem("chat_messages");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [input, setInput] = useState("");
+
+  useEffect(() => {
+    sessionStorage.setItem("chat_messages", JSON.stringify(messages));
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMessage: Message = { sender: 'user', text: input };
+    const userMessage: Message = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await fetch('http://localhost:3000/mensaje', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("http://localhost:3000/mensaje", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          user_id: '550e8400-e29b-41d4-a716-446655440001',
+          user_id: "550e8400-e29b-41d4-a716-446655440001",
           message: input,
         }),
       });
 
       if (response.ok) {
-        // Suponiendo que la respuesta sea texto plano (ajústalo si es JSON)
-        const botReplyText = await response.text();
-        const botMessage: Message = { sender: 'bot', text: botReplyText };
-        setMessages((prev) => [...prev, botMessage]);
+        const botReply = await response.text();
+        setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
       } else {
         setMessages((prev) => [
           ...prev,
-          { sender: 'bot', text: 'Error del servidor 😓' },
+          { sender: "bot", text: "Hubo un error al procesar 😓" },
         ]);
       }
-    } catch (err) {
+    } catch {
       setMessages((prev) => [
         ...prev,
-        { sender: 'bot', text: 'No se pudo conectar al servidor 🛑' },
+        { sender: "bot", text: "No se pudo conectar al servidor 🛑" },
       ]);
     }
 
-    setInput('');
+    setInput("");
   };
 
+  const userAvatar =
+    "https://i.ibb.co/MZj7tCn/user-avatar.png"; // o usa uno propio
+  const botAvatar =
+    "https://i.ibb.co/zf7vnL6/robot-avatar.png"; // o usa uno propio
+
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded-xl shadow-lg bg-white h-[500px] flex flex-col">
-      <div className="flex-1 overflow-y-auto space-y-2 mb-4">
+    <div className="flex flex-col h-full bg-white text-sm">
+      <div className="flex-1 overflow-y-auto px-3 py-3 space-y-3">
         {messages.map((msg, idx) => (
-          <div
+          <motion.div
             key={idx}
-            className={`p-2 rounded-lg max-w-[80%] ${
-              msg.sender === 'user'
-                ? 'bg-blue-200 self-end'
-                : 'bg-gray-200 self-start'
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className={`flex items-end gap-2 ${
+              msg.sender === "user" ? "justify-end" : "justify-start"
             }`}
           >
-            {msg.text}
-          </div>
+            {msg.sender === "bot" && (
+              <img
+                src={botAvatar}
+                alt="Bot"
+                className="w-7 h-7 rounded-full border shadow"
+              />
+            )}
+            <div
+              className={`p-3 rounded-2xl max-w-[80%] leading-snug shadow-md ${
+                msg.sender === "user"
+                  ? "bg-[#28465A] text-white rounded-br-none"
+                  : "bg-gray-100 text-gray-800 rounded-bl-none"
+              }`}
+            >
+              {msg.text}
+            </div>
+            {msg.sender === "user" && (
+              <img
+                src={userAvatar}
+                alt="You"
+                className="w-7 h-7 rounded-full border shadow"
+              />
+            )}
+          </motion.div>
         ))}
       </div>
-      <div className="flex gap-2">
+
+      <div className="border-t px-3 py-2 flex items-center gap-2 bg-white">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="border flex-1 rounded px-2"
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder="Escribe tu mensaje..."
-          onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+          className="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#28465A] transition"
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-600 text-white px-4 rounded hover:bg-blue-700"
+          className="bg-[#28465A] hover:bg-[#1f3847] text-white px-4 py-2 rounded-full transition font-semibold"
         >
           Enviar
         </button>
