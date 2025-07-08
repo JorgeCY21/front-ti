@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CalendarComponent() {
   const [selectedMonth, setSelectedMonth] = useState<number>(0); // Enero=0
+  const navigate = useNavigate();
 
   const year = 2025;
 
@@ -10,7 +12,6 @@ function CalendarComponent() {
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
-  // Simulamos datos de ejemplo
   const consumoTotal = 150; // kWh
   const metaTotal = 120; // kWh
   const logrado = consumoTotal <= metaTotal;
@@ -81,7 +82,7 @@ function CalendarComponent() {
         </div>
       </div>
 
-      {/* Resumen */}
+      {/* Resumen + botón */}
       <div className="bg-white shadow rounded-lg p-6 flex flex-col justify-center">
         <h3 className="text-xl font-semibold mb-4 text-center">
           Resumen del Mes
@@ -92,19 +93,27 @@ function CalendarComponent() {
         <p className="text-gray-700 mb-2">
           <span className="font-medium">Año:</span> {year}
         </p>
-        <p className="text-gray-700 mb-2">  
-          <span className="font-medium">Consumo Total:</span> S/. {consumoTotal} 
+        <p className="text-gray-700 mb-2">
+          <span className="font-medium">Consumo Total:</span> S/. {consumoTotal}
         </p>
         <p className="text-gray-700 mb-4">
-          <span className="font-medium">Meta:</span> S/. {metaTotal} 
+          <span className="font-medium">Meta:</span> S/. {metaTotal}
         </p>
         <div
-          className={`text-center font-semibold py-2 rounded ${
+          className={`text-center font-semibold py-2 rounded mb-4 ${
             logrado ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
           }`}
         >
           {logrado ? "Meta Lograda ✅" : "Meta No Alcanzada"}
         </div>
+
+        {/* Botón para gestionar metas */}
+        <button
+          onClick={() => navigate("/metas")}
+          className="w-full bg-[#005766] text-white font-medium px-4 py-2 rounded hover:bg-[#00434f] transition"
+        >
+          Ver / Crear Meta de Consumo
+        </button>
       </div>
     </div>
   );

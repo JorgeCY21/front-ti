@@ -11,6 +11,7 @@ import DashboardPage from "../pages/DashboardPage";
 import ForgotPassword from "../pages/RecoverPassword/ForgotPassword";
 import VerifyCode from "../pages/RecoverPassword/VerifyCode";
 import ResetPassword from "../pages/RecoverPassword/ResetPassword";
+import GoalsPage from "../pages/GoalsPage";
 
 function AppRouter() {
   return (
@@ -64,6 +65,15 @@ function AppRouter() {
         element={
           <EstadisticasPage />
         } 
+      />
+
+      <Route
+        path="/metas"
+        element={
+          <PrivateRoute>
+            <GoalsPage />
+          </PrivateRoute>
+        }
       />
 
       {/* Redirección por defecto */}
