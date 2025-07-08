@@ -39,6 +39,11 @@ function Navbar() {
             Videos
           </Link>
         </li>
+        <li>
+          <Link to="/dashboard" className={navLinkStyle}>
+            Dashboard
+          </Link>
+        </li>
       </>
     ) : (
       <>

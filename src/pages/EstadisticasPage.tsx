@@ -8,7 +8,6 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
-  LineChart,
   Line,
   ComposedChart,
   Legend,

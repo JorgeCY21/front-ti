@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast"; // Importa toast
 import { useDevices } from "../hooks/useDevices";
 import { useAuth } from "../context/AuthContext";
 import { useDailyDevices } from "../hooks/useDailyDevices";
@@ -12,24 +14,20 @@ interface DevicesProps {
 
 const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
   const { user } = useAuth();
+  const queryClient = useQueryClient(); // <- Para invalidar queries
   const { data: devices, isLoading, isError } = useDevices();
   const registerDevicesMutation = useDailyDevices();
   const updateDevicesMutation = useUpdateDailyDevices();
-
-  // Fecha de hoy en formato YYYY-MM-DD
   const today = dayjs().format("YYYY-MM-DD");
 
   // Obtén consumos previos
-  const { data: dailyConsumptions } = useDailyConsumptionsByDate(
-    user?.id!,
-    today
-  );
+  const { data: dailyConsumptions } = useDailyConsumptionsByDate(user?.id!, today);
 
-  // Estados
+  // Estados para horas y consumos
   const [hoursUseMap, setHoursUseMap] = useState<{ [deviceId: string]: string }>({});
   const [dailyConsumptionMap, setDailyConsumptionMap] = useState<{ [deviceId: string]: string }>({});
 
-  // Cuando carga data previa, rellenar mapas
+  // Rellena los datos iniciales
   useEffect(() => {
     if (dailyConsumptions) {
       const hoursMap: { [deviceId: string]: string } = {};
@@ -49,45 +47,44 @@ const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
     setHoursUseMap((prev) => ({ ...prev, [deviceId]: value }));
   };
 
-  const handleSubmit = (deviceId: string) => {
+    const handleSubmit = async (deviceId: string) => {
     const hours = Number(hoursUseMap[deviceId] ?? 0);
     if (hours <= 0) {
-      alert("Ingresa un número válido de horas.");
+      toast.error("Ingresa un número válido de horas."); // Toast de error
       return;
     }
 
     const existingConsumptionId = dailyConsumptionMap[deviceId];
 
-    if (existingConsumptionId) {
-      updateDevicesMutation.mutate({
-        id: existingConsumptionId,
-        hours_use: hours,
-      });
-    } else {
-      registerDevicesMutation.mutate(
-        {
+    try {
+      if (existingConsumptionId) {
+        await updateDevicesMutation.mutateAsync({
+          id: existingConsumptionId,
+          hours_use: hours,
+        });
+      } else {
+        await registerDevicesMutation.mutateAsync({
           user_id: user?.id!,
           device_id: deviceId,
           hours_use: hours,
           is_active: true,
-        },
-        {
-          onSuccess: (data) => {
-            const createdId = data.data.id;
-            setDailyConsumptionMap((prev) => ({
-              ...prev,
-              [deviceId]: createdId,
-            }));
-          },
-        }
-      );
-    }
-
-    if (onAddDevice && devices) {
-      const device = devices.find((d) => d.id === deviceId);
-      if (device) {
-        onAddDevice({ id: device.id, name: device.name, hours });
+        });
       }
+
+      await queryClient.invalidateQueries({ 
+        queryKey: ["dailyConsumptions", user?.id, today] 
+      });
+
+      if (onAddDevice && devices) {
+        const device = devices.find((d) => d.id === deviceId);
+        if (device) {
+          onAddDevice({ id: device.id, name: device.name, hours });
+        }
+      }
+
+      toast.success("¡Registro exitoso!"); // Toast de éxito
+    } catch (error) {
+      toast.error("Error al guardar los datos."); // Toast de error
     }
   };
 
@@ -113,7 +110,7 @@ const DevicesComponent: React.FC<DevicesProps> = ({ onAddDevice }) => {
           />
           <button
             onClick={() => handleSubmit(device.id)}
-            className="w-full bg-[#005766] text-white mt-2 py-2 rounded hover:bg-[#00434f]"
+            className="w-full bg-[#005766] text-white mt-2 py-2 rounded hover:bg-[#00434f] select-none cursor-pointer"
           >
             Guardar
           </button>
