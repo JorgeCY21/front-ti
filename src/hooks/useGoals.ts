@@ -44,3 +44,29 @@ export const useCreateGoal = () => {
     },
   });
 };
+
+// Actualizar una meta existente
+export const useUpdateGoal = () => {
+  return useMutation({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { estimated_cost: number; month: string; year: number };
+    }) => {
+      const response = await api.put(`/goals/${id}`, data);
+      return response.data;
+    },
+  });
+};
+
+
+export const useDeleteGoal = () => {
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete(`/goals/${id}`);
+      return response.data;
+    },
+  });
+};
