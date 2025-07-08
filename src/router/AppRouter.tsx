@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import Calculator from "../pages/Calculator";
 import MonthlyConsumptions from "../pages/MonthlyConsumptions";
 import PrivateRoute from "./PrivateRoute";
+import VideosPage from "../pages/VideosPage";
 
 function AppRouter() {
   return (
@@ -31,6 +32,16 @@ function AppRouter() {
           </PrivateRoute>
         }
       />
+
+      <Route 
+        path="/videos" 
+        element={
+          <PrivateRoute>
+            <VideosPage />
+          </PrivateRoute>
+        } 
+      />
+
 
       {/* Redirección por defecto */}
       <Route path="/*" element={<Navigate to="/" />} />

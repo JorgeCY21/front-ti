@@ -16,34 +16,47 @@ function Navbar() {
     "flex items-center py-2 px-5 md:py-5 text-white no-underline hover:bg-white hover:text-black hover:rounded-none transition";
 
   const renderLinks = () => (
-    <ul className="flex flex-col md:flex-row md:space-x-0 items-start justify-start text-left w-full">
-      {isAuthenticated ? (
-        <>
-          <li>
-            <Link to="/consumoDiario" className={navLinkStyle}>
-              Consumo Diario
-            </Link>
-          </li>
-          <li>
-            <Link to="/consumoMensual" className={navLinkStyle}>
-              Consumo Mensual
-            </Link>
-          </li>
-          <li>
-            <Link to="/estadisticas" className={navLinkStyle}>
-              Estadísticas
-            </Link>
-          </li>
-        </>
-      ) : (
+  <ul className="flex flex-col md:flex-row md:space-x-0 items-start justify-start text-left w-full">
+    {isAuthenticated ? (
+      <>
+        <li>
+          <Link to="/consumoDiario" className={navLinkStyle}>
+            Consumo Diario
+          </Link>
+        </li>
+        <li>
+          <Link to="/consumoMensual" className={navLinkStyle}>
+            Consumo Mensual
+          </Link>
+        </li>
         <li>
           <Link to="/estadisticas" className={navLinkStyle}>
             Estadísticas
           </Link>
         </li>
-      )}
-    </ul>
-  );
+        <li>
+          <Link to="/videos" className={navLinkStyle}>
+            Videos
+          </Link>
+        </li>
+      </>
+    ) : (
+      <>
+        <li>
+          <Link to="/estadisticas" className={navLinkStyle}>
+            Estadísticas
+          </Link>
+        </li>
+        <li>
+          <Link to="/videos" className={navLinkStyle}>
+            Videos
+          </Link>
+        </li>
+      </>
+    )}
+  </ul>
+);
+
 
   const renderAuthButtons = () => (
     <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2 w-full md:w-auto">
