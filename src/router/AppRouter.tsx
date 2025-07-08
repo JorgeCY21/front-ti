@@ -8,6 +8,9 @@ import PrivateRoute from "./PrivateRoute";
 import VideosPage from "../pages/VideosPage";
 import EstadisticasPage from "../pages/EstadisticasPage";
 import DashboardPage from "../pages/DashboardPage";
+import ForgotPassword from "../pages/RecoverPassword/ForgotPassword";
+import VerifyCode from "../pages/RecoverPassword/VerifyCode";
+import ResetPassword from "../pages/RecoverPassword/ResetPassword";
 
 function AppRouter() {
   return (
@@ -16,6 +19,9 @@ function AppRouter() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-reset-code" element={<VerifyCode />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Protegidas */}
       <Route
