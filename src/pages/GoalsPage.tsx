@@ -60,24 +60,25 @@ function GoalsPage() {
     setEditEstimatedCost(estimated_cost);
   };
 
-  const handleUpdate = (goalId: string, month: string, year: number) => {
-    updateGoal.mutate(
-      {
-        id: goalId,
-        data: { month, year, estimated_cost: editEstimatedCost },
+  const handleUpdate = (goalId: string) => {
+  updateGoal.mutate(
+    {
+      id: goalId,
+      data: { estimated_cost: editEstimatedCost },
+    },
+    {
+      onSuccess: () => {
+        showToast("Meta actualizada correctamente", "success");
+        setEditingGoalId(null);
+        refetch();
       },
-      {
-        onSuccess: () => {
-          showToast("Meta actualizada correctamente", "success");
-          setEditingGoalId(null);
-          refetch();
-        },
-        onError: () => {
-          showToast("Error al actualizar la meta", "error");
-        },
-      }
-    );
-  };
+      onError: () => {
+        showToast("Error al actualizar la meta", "error");
+      },
+    }
+  );
+};
+
 
   const handleDelete = (goalId: string) => {
     deleteGoal.mutate(goalId, {
@@ -189,7 +190,7 @@ function GoalsPage() {
                             </div>
                             <div className="flex gap-2">
                               <button
-                                onClick={() => handleUpdate(goal.id, goal.month, goal.year)}
+                                onClick={() => handleUpdate(goal.id)}
                                 className="flex items-center gap-1 px-3 py-1.5 bg-[#005766] text-white text-sm rounded-md hover:bg-[#00434f] transition-colors cursor-pointer select-none"
                               >
                                 <Save className="w-4 h-4" />
