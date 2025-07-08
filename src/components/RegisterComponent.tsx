@@ -34,12 +34,14 @@ function RegisterComponent() {
       alert("Las contraseñas no coinciden");
       return;
     }
-
+    
+    formData.district_id=Number(formData.district_id);
+    
     registerMutation.mutate({
       ...formData,
       // Elimina campo repeatPassword antes de enviar
       repeatPassword: undefined,
-    } as any); // Puedes tipar mejor si separas los campos
+    } as any);
   };
 
   return (
