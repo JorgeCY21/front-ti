@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import NotificationBell from "./NotificationBell";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,50 +58,53 @@ function Navbar() {
   </ul>
 );
 
-
-  const renderAuthButtons = () => (
-    <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2 w-full md:w-auto">
-      {isAuthenticated ? (
-        <div className="flex items-center md:ml-auto space-x-2">
+const renderAuthButtons = () => (
+  <div className="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-2 w-full md:w-auto">
+    {isAuthenticated ? (
+      <div className="flex items-center md:ml-auto space-x-2">
+        <div className="flex items-center gap-3">
+          <NotificationBell />
           <span className="text-white">Hola, {user?.name}</span>
-          <button
-            onClick={handleLogout}
-            className="border border-white rounded-md px-2 py-1 hover:bg-white hover:text-gray-800 transition"
-          >
-            <svg
-              className="w-4 h-6 text-white hover:text-gray-800"
-              fill="none"
-              viewBox="0 0 16 16"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"
-              />
-            </svg>
-          </button>
         </div>
-      ) : (
-        <>
-          <Link
-            to="/login"
-            className="border border-white text-white rounded-md px-3 py-1.5 hover:bg-white hover:text-gray-800 transition text-base text-center"
+        <button
+          onClick={handleLogout}
+          className="border border-white rounded-md px-2 py-1 hover:bg-white hover:text-gray-800 transition"
+        >
+          <svg
+            className="w-4 h-6 text-white hover:text-gray-800"
+            fill="none"
+            viewBox="0 0 16 16"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            Iniciar Sesión
-          </Link>
-          <Link
-            to="/register"
-            className="bg-white text-gray-800 rounded-md px-3 py-1.5 text-base hover:bg-gray-200 transition mt-2 md:mt-0 text-center"
-          >
-            Registrarse
-          </Link>
-        </>
-      )}
-    </div>
-  );
+            <path
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"
+            />
+          </svg>
+        </button>
+      </div>
+    ) : (
+      <>
+        <Link
+          to="/login"
+          className="border border-white text-white rounded-md px-3 py-1.5 hover:bg-white hover:text-gray-800 transition text-base text-center"
+        >
+          Iniciar Sesión
+        </Link>
+        <Link
+          to="/register"
+          className="bg-white text-gray-800 rounded-md px-3 py-1.5 text-base hover:bg-gray-200 transition mt-2 md:mt-0 text-center"
+        >
+          Registrarse
+        </Link>
+      </>
+    )}
+  </div>
+);
+
 
   return (
     <nav className="shadow-2xs rounded-lg mx-3 my-2 px-3 py-5 md:mx-6 md:px-3 md:py-0 bg-[#28465A] transition-all duration-300 ease-in-out">
