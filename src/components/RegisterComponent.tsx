@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useRegisterUser } from "../hooks/useRegisterUser";
@@ -5,6 +6,9 @@ import { useDistricts } from "../hooks/useDistricts";
 import ErrorAlert from "../components/ErrorAlert";
 
 function RegisterComponent() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatPassword, setShowRepeatPassword] = useState(false);
+
   const registerMutation = useRegisterUser();
   const { data: districts} = useDistricts();
 
@@ -126,26 +130,42 @@ function RegisterComponent() {
               </select>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Contraseña"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
 
-            <div className="mb-6">
+            <div className="mb-6 relative">
               <input
-                type="password"
+                type={showRepeatPassword ? "text" : "password"}
                 name="repeatPassword"
                 value={formData.repeatPassword}
                 onChange={handleChange}
                 placeholder="Repetir contraseña"
-                className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#005766]"
+                className="w-full border border-gray-300 rounded-md px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-[#005766]"
               />
+              <button
+                type="button"
+                onClick={() => setShowRepeatPassword(!showRepeatPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
+                tabIndex={-1}
+              >
+                {showRepeatPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
 
             <div className="text-center mb-4">
