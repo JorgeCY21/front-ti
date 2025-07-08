@@ -1,52 +1,38 @@
+import { useVideos } from "../hooks/useVideos";
 import Navbar from "../components/Navbar";
 
 function VideosPage() {
+  const { data: videos, isLoading, error } = useVideos();
+
+  if (isLoading) return <p className="text-white text-center mt-6">Cargando videos...</p>;
+  if (error) return <p className="text-red-400 text-center mt-6">Error al cargar videos.</p>;
+
   return (
-    <div className="main">
+    <div className="min-h-screen bg-white text-black">
       <Navbar />
-      <div className="mx-6 flex flex-wrap py-6 gap-4">
-        {/* Columna 1: Lista de videos */}
-        <div className="w-full md:w-1/2 space-y-4">
-          <h2 className="text-2xl font-bold text-white mb-4">Videos educativos</h2>
+      <div className="px-6 py-10">
+        <h1 className="text-3xl font-bold mb-6 text-center">Videos Educativos</h1>
 
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <iframe
-              className="w-full h-56"
-              src="https://www.youtube.com/embed/l6r6Zy5sJ6c"
-              title="Video 1"
-              frameBorder="0"
-              allowFullScreen
-            />
-            <div className="p-4 text-gray-900">
-              <h3 className="font-semibold text-lg">Cómo reducir tu consumo eléctrico</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {videos?.map((video) => (
+            <div
+              key={video.id}
+              className="bg-white rounded-lg overflow-hidden shadow-md text-black transition hover:scale-[1.02] duration-300"
+            >
+              <iframe
+                className="w-full h-64"
+                src={video.url.replace("watch?v=", "embed/")}
+                title={video.title}
+                allowFullScreen
+              />
+              <div className="p-4">
+                <h2 className="text-xl font-semibold">{video.title}</h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  Duración: {Math.floor(video.duration_seg / 60)} min {video.duration_seg % 60} seg
+                </p>
+              </div>
             </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            <iframe
-              className="w-full h-56"
-              src="https://www.youtube.com/embed/sTLnK4G5NKM"
-              title="Video 2"
-              frameBorder="0"
-              allowFullScreen
-            />
-            <div className="p-4 text-gray-900">
-              <h3 className="font-semibold text-lg">Consejos para ahorrar energía</h3>
-            </div>
-          </div>
-        </div>
-
-        {/* Columna 2: Texto adicional u otros recursos */}
-        <div className="w-full md:w-1/2 text-white">
-          <h3 className="text-xl font-semibold mb-4">¿Por qué es importante informarte?</h3>
-          <p className="mb-4">
-            Aprender sobre tu consumo energético te permite tomar decisiones más conscientes
-            y sostenibles. Estos videos te ayudarán a identificar oportunidades de ahorro
-            en tu hogar y a entender mejor tu recibo de luz.
-          </p>
-          <p>
-            La educación energética es el primer paso hacia un futuro más limpio y eficiente. 💡
-          </p>
+          ))}
         </div>
       </div>
     </div>
