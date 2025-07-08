@@ -18,7 +18,7 @@ function HomeComponent(){
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
             <Link
               to="/register"
-              className="bg-[#13ada0] text-white px-6 py-3 rounded-md text-lg hover:bg-[#0e8d82] transition"
+              className="bg-[#13ada0] text-white px-6 py-3 rounded-md text-lg hover:bg-[#0e8d82] transition select-none"
             >
               Empezar ahora
             </Link>

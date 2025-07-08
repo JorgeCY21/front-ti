@@ -149,7 +149,7 @@ function RegisterComponent() {
             <div className="text-center mb-4">
               <button
                 type="submit"
-                className="w-full bg-[#005766] text-white rounded-md py-2 hover:bg-[#00434f] transition"
+                className="w-full bg-[#005766] text-white rounded-md py-2 hover:bg-[#00434f] transition select-none cursor-pointer" 
               >
                 Crear cuenta
               </button>
