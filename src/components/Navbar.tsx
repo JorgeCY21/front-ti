@@ -47,11 +47,6 @@ function Navbar() {
             Estadísticas
           </Link>
         </li>
-        <li>
-          <Link to="/videos" className={navLinkStyle}>
-            Videos
-          </Link>
-        </li>
       </>
     )}
   </ul>

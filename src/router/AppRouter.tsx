@@ -6,6 +6,7 @@ import Calculator from "../pages/Calculator";
 import MonthlyConsumptions from "../pages/MonthlyConsumptions";
 import PrivateRoute from "./PrivateRoute";
 import VideosPage from "../pages/VideosPage";
+import EstadisticasPage from "../pages/EstadisticasPage";
 
 function AppRouter() {
   return (
@@ -42,6 +43,12 @@ function AppRouter() {
         } 
       />
 
+      <Route 
+        path="/estadisticas" 
+        element={
+          <EstadisticasPage />
+        } 
+      />
 
       {/* Redirección por defecto */}
       <Route path="/*" element={<Navigate to="/" />} />
