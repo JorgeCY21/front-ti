@@ -7,6 +7,7 @@ import MonthlyConsumptions from "../pages/MonthlyConsumptions";
 import PrivateRoute from "./PrivateRoute";
 import VideosPage from "../pages/VideosPage";
 import EstadisticasPage from "../pages/EstadisticasPage";
+import DashboardPage from "../pages/DashboardPage";
 
 function AppRouter() {
   return (
@@ -39,6 +40,15 @@ function AppRouter() {
         element={
           <PrivateRoute>
             <VideosPage />
+          </PrivateRoute>
+        } 
+      />
+
+      <Route 
+        path="/dashboard" 
+        element={
+          <PrivateRoute>
+            <DashboardPage/>
           </PrivateRoute>
         } 
       />
