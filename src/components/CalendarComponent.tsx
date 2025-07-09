@@ -1,8 +1,8 @@
-// src/components/CalendarComponent.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDailyStreak } from "../hooks/useDailyStreak";
 import { useGoalsByUser } from "../hooks/useGoals";
+import { useMonthlyKwhFromDaily } from "../hooks/useMonthlyKwhFromDaily";
 import { useAuth } from "../context/AuthContext";
 import { subDays, format } from "date-fns";
 
@@ -11,48 +11,53 @@ function CalendarComponent() {
   const navigate = useNavigate();
   const { streak, isLoading, error } = useDailyStreak();
   const { user } = useAuth();
-  const { data: metas, isLoading: loadingMetas } = useGoalsByUser(user?.id ?? "");
 
   const currentYear = new Date().getFullYear();
   const [year] = useState<number>(currentYear);
+
+  const { data: metas, isLoading: loadingMetas } = useGoalsByUser(user?.id ?? "");
+  const { data: consumoMensual, isLoading: loadingConsumo } = useMonthlyKwhFromDaily(
+    user?.id ?? "",
+    selectedMonth,
+    year
+  );
 
   const monthNames = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
-  const currentMonthName = monthNames[selectedMonth];
+  const selectedMonthName = monthNames[selectedMonth];
+
   const metaActual = metas?.find(
     (m) =>
-      m.month.toLowerCase() === currentMonthName.toLowerCase() &&
+      m.month.toLowerCase() === selectedMonthName.toLowerCase() &&
       m.year === year &&
       m.is_active
   );
-  const metaTotal = metaActual?.estimated_cost ?? 0;
 
-  // ⚠️ Temporal: reemplaza esto por tu consumo real luego
-  const consumoTotal = 150;
-  const logrado = consumoTotal <= metaTotal;
+  const metaTotal = metaActual?.estimated_cost ?? 0;
+  const goalKwh = metaActual?.goal_kwh ?? 0;
+  const consumoTotal = consumoMensual?.total_kwh ?? 0;
+
+  const tarifaKwh = goalKwh > 0 ? metaTotal / goalKwh : 0;
+  const costoActual = consumoTotal * tarifaKwh;
+  const logrado = costoActual <= metaTotal;
 
   const firstDayOfMonth = new Date(year, selectedMonth, 1);
   const startDay = firstDayOfMonth.getDay();
   const daysInMonth = new Date(year, selectedMonth + 1, 0).getDate();
 
   const calendarDays: (number | null)[] = [];
-  for (let i = 0; i < startDay; i++) {
-    calendarDays.push(null);
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    calendarDays.push(d);
-  }
+  for (let i = 0; i < startDay; i++) calendarDays.push(null);
+  for (let d = 1; d <= daysInMonth; d++) calendarDays.push(d);
 
   const getStreakDates = (streakLength: number): Set<string> => {
     const dates = new Set<string>();
     const today = new Date();
     for (let i = 0; i < streakLength; i++) {
       const d = subDays(today, i);
-      const iso = format(d, "yyyy-MM-dd");
-      dates.add(iso);
+      dates.add(format(d, "yyyy-MM-dd"));
     }
     return dates;
   };
@@ -62,12 +67,12 @@ function CalendarComponent() {
   const isStreakDay = (day: number | null): boolean => {
     if (!day) return false;
     const date = new Date(year, selectedMonth, day);
-    const isoDate = format(date, "yyyy-MM-dd");
-    return streakDates.has(isoDate);
+    return streakDates.has(format(date, "yyyy-MM-dd"));
   };
 
-  if (isLoading || loadingMetas)
+  if (isLoading || loadingMetas || loadingConsumo)
     return <div className="text-center p-8">Cargando datos de calendario...</div>;
+
   if (error)
     return <div className="text-center p-8 text-red-500">Error al cargar los datos: {(error as Error).message}</div>;
 
@@ -129,7 +134,8 @@ function CalendarComponent() {
         <h3 className="text-xl font-semibold mb-4 text-center">Resumen del Mes</h3>
         <p className="text-gray-700 mb-2"><span className="font-medium">Mes:</span> {monthNames[selectedMonth]}</p>
         <p className="text-gray-700 mb-2"><span className="font-medium">Año:</span> {year}</p>
-        <p className="text-gray-700 mb-2"><span className="font-medium">Consumo Total:</span> S/. {consumoTotal.toFixed(2)}</p>
+        <p className="text-gray-700 mb-2"><span className="font-medium">Consumo Total:</span> {consumoTotal.toFixed(2)} kWh</p>
+        <p className="text-gray-700 mb-2"><span className="font-medium">Costo estimado:</span> S/. {costoActual.toFixed(2)}</p>
         <p className="text-gray-700 mb-4"><span className="font-medium">Meta:</span> S/. {metaTotal.toFixed(2)}</p>
         <div
           className={`text-center font-semibold py-2 rounded mb-4 ${

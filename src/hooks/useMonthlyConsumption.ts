@@ -10,11 +10,12 @@ interface RawMonthlyRecord {
   is_active: boolean;
 }
 
-interface ProcessedMonthlyRecord {
-  month: string;
+export interface ProcessedMonthlyRecord {
+  month: string;        // Ej: "Jul"
+  monthNumber: number;  // 0 = Enero, 6 = Julio, etc.
   total_kwh: number;
   year: string;
-  date: string; // Para mantener compatibilidad con el formato esperado
+  date: string;
 }
 
 export function useMonthlyConsumption(userId: string) {
@@ -27,14 +28,12 @@ export function useMonthlyConsumption(userId: string) {
         dayjs().subtract(i, "month")
       ).reverse();
 
-      // Inicializamos un mapa por mes
       const grouped: Record<string, { total: number; year: string }> = {};
       last12Months.forEach((m) => {
         const key = m.format("YYYY-MM");
         grouped[key] = { total: 0, year: m.format("YYYY") };
       });
 
-      // Procesar datos
       for (const item of res.data) {
         const monthKey = dayjs(item.date).format("YYYY-MM");
         if (grouped.hasOwnProperty(monthKey)) {
@@ -42,14 +41,17 @@ export function useMonthlyConsumption(userId: string) {
         }
       }
 
-      // Convertir a array
       const processed: ProcessedMonthlyRecord[] = Object.entries(grouped).map(
-        ([month, data]) => ({
-          month: dayjs(month).format("MMM"),
-          year: data.year,
-          date: month + "-01", // Fecha ficticia para mantener formato
-          total_kwh: parseFloat(data.total.toFixed(2)),
-        })
+        ([month, data]) => {
+          const dateObj = dayjs(month + "-01");
+          return {
+            month: dateObj.format("MMM"),
+            monthNumber: dateObj.month(), // 0 a 11
+            year: data.year,
+            date: month + "-01",
+            total_kwh: parseFloat(data.total.toFixed(2)),
+          };
+        }
       );
 
       return processed;

@@ -156,19 +156,19 @@ function DashboardPage() {
 
               <button
                 onClick={() => setTimeRange("weekly")}
-                className={`px-3 py-1 text-sm rounded-md transition-all ${timeRange === "weekly" ? "bg-blue-100 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`px-3 py-1 text-sm rounded-md select-none cursor-pointer transition-all ${timeRange === "weekly" ? "bg-blue-100 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}`}
               >
                 Semanal
               </button>
               <button
                 onClick={() => setTimeRange("biweekly")}
-                className={`px-3 py-1 text-sm rounded-md transition-all ${timeRange === "biweekly" ? "bg-blue-100 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`px-3 py-1 text-sm rounded-md select-none cursor-pointer transition-all ${timeRange === "biweekly" ? "bg-blue-100 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}`}
               >
                 15 días
               </button>
               <button
                 onClick={() => setTimeRange("monthly")}
-                className={`px-3 py-1 text-sm rounded-md transition-all ${timeRange === "monthly" ? "bg-blue-100 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}`}
+                className={`px-3 py-1 text-sm rounded-md select-none cursor-pointer transition-all ${timeRange === "monthly" ? "bg-blue-100 text-blue-600 font-medium" : "text-gray-600 hover:bg-gray-100"}`}
               >
                 Mensual
               </button>
