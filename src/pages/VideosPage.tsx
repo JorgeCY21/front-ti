@@ -1,14 +1,17 @@
+import { useEffect } from "react";
 import { useVideos } from "../hooks/useVideos";
 import { useUserVideos } from "../hooks/useUserVideos";
 import { useRegisterUserVideo } from "../hooks/useRegisterUserVideo";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
+import { useAssignMedal } from "../hooks/useAssignMedal";
 
 function VideosPage() {
   const { user } = useAuth();
   const { data: videos, isLoading, error } = useVideos();
   const { data: userVideos } = useUserVideos(user?.id || "");
   const { mutate: registerUserVideo } = useRegisterUserVideo();
+  const { mutate: assignMedal } = useAssignMedal();
 
   const alreadySeen = new Set(userVideos?.map((uv) => uv.video_id));
 
@@ -16,6 +19,22 @@ function VideosPage() {
     if (!user?.id || alreadySeen.has(videoId)) return;
     registerUserVideo({ user_id: user.id, video_id: videoId });
   };
+
+  // Asignar medalla según cantidad de videos vistos
+  useEffect(() => {
+    if (!user || !userVideos) return;
+
+    const seenCount = userVideos.length;
+    let medalId: number | null = null;
+
+    if (seenCount >= 10) medalId = 3; // Oro
+    else if (seenCount >= 5) medalId = 2; // Plata
+    else if (seenCount >= 1) medalId = 1; // Bronce
+
+    if (medalId) {
+      assignMedal({ user_id: user.id, medal_id: medalId });
+    }
+  }, [userVideos, user, assignMedal]);
 
   if (isLoading) return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-blue-100">

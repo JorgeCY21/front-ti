@@ -3,13 +3,13 @@ import DevicesComponent from "../components/DevicesComponent";
 import Navbar from "../components/Navbar";
 import SearchComponent from "../components/SearchComponent";
 import { useAuth } from "../context/AuthContext";
-import ChatBotFloating from "../components/ChatBotFloating";
+import ChatBot from "../components/ChatBot"; // Asegúrate de que el import sea correcto
 
 function Calculator() {
   const { user } = useAuth();
 
   return (
-    <div className="main">
+    <div className="main relative"> {/* Añadido relative para contener el ChatBot posicionado fixed */}
       <Navbar />
       <div className="mx-6 flex flex-wrap">
         <div className="flex flex-wrap w-full md:w-3/5">
@@ -24,8 +24,9 @@ function Calculator() {
           <CalculatorComponent userId={user?.id!} />
         </div>
       </div>
-      <ChatBotFloating />
-
+      
+      {/* ChatBot como componente flotante */}
+      <ChatBot />
     </div>
   );
 }
