@@ -14,26 +14,26 @@ import {
 } from "recharts";
 
 const distritosRaw = [
-  { name: "Cayma", consumo_kwh: 15800, usuarios: 460 },           // ~34.3
-  { name: "Miraflores", consumo_kwh: 14100, usuarios: 410 },      // ~34.4
-  { name: "Yanahuara", consumo_kwh: 12050, usuarios: 310 },       // ~38.9
-  { name: "José Luis Bustamante y Rivero", consumo_kwh: 18300, usuarios: 550 }, // ~33.2
-  { name: "Cerro Colorado", consumo_kwh: 16900, usuarios: 490 },  // ~34.5
-  { name: "Alto Selva Alegre", consumo_kwh: 11300, usuarios: 300 }, // ~37.7
-  { name: "Paucarpata", consumo_kwh: 16000, usuarios: 390 },      // 🚨 ~41.0
-  { name: "Mariano Melgar", consumo_kwh: 13400, usuarios: 370 },  // ~36.2
-  { name: "Hunter", consumo_kwh: 11800, usuarios: 340 },          // ~34.7
-  { name: "Socabaya", consumo_kwh: 14500, usuarios: 420 },        // ~34.5
-  { name: "Tiabaya", consumo_kwh: 9700, usuarios: 200 },          // 🚨 ~48.5
-  { name: "Characato", consumo_kwh: 9100, usuarios: 190 },        // 🚨 ~47.9
-  { name: "Sachaca", consumo_kwh: 9600, usuarios: 250 },          // ~38.4
-  { name: "Chiguata", consumo_kwh: 5900, usuarios: 120 },         // 🚨 ~49.2
-  { name: "Jacobo Hunter", consumo_kwh: 10200, usuarios: 320 },   // ~31.9
-  { name: "Mollebaya", consumo_kwh: 4600, usuarios: 90 },         // 🚨 ~51.1
-  { name: "Sabandía", consumo_kwh: 6400, usuarios: 140 },         // 🚨 ~45.7
-  { name: "Quequeña", consumo_kwh: 3800, usuarios: 70 },          // 🚨 ~54.3
-  { name: "Uchumayo", consumo_kwh: 7900, usuarios: 210 },         // ~37.6
-  { name: "Yura", consumo_kwh: 10800, usuarios: 180 },            // 🚨 ~60.0
+  { name: "Cayma", consumo_kwh: 4602873.1, usuarios: 43424  },           // ~34.3
+  { name: "Miraflores", consumo_kwh: 3040109.1, usuarios: 88375  },      // ~34.4
+  { name: "Yanahuara", consumo_kwh: 2519644.37, usuarios: 64738  },       // ~38.9
+  { name: "José Luis Bustamante y Rivero", consumo_kwh: 4785295.71, usuarios: 144140  }, // ~33.2
+  { name: "Cerro Colorado", consumo_kwh: 16937583.59, usuarios: 491225  },  // ~34.5
+  { name: "Alto Selva Alegre", consumo_kwh: 3041680.87, usuarios: 80678   }, // ~37.7
+  { name: "Paucarpata", consumo_kwh: 5382241.17, usuarios: 131207  },      // 🚨 ~41.0
+  { name: "Mariano Melgar", consumo_kwh: 2243231.77, usuarios: 61970  },  // ~36.2
+  { name: "Hunter", consumo_kwh: 1913366.04, usuarios: 55154  },          // ~34.7
+  { name: "Socabaya", consumo_kwh: 2953560.43, usuarios: 85615  },        // ~34.5
+  { name: "Tiabaya", consumo_kwh: 637414.73, usuarios: 13139  },          // 🚨 ~48.5
+  { name: "Characato", consumo_kwh: 591110.35, usuarios: 12338  },        // 🚨 ~47.9
+  { name: "Sachaca", consumo_kwh: 2748329.5300000003, usuarios: 71485  },          // ~38.4
+  { name: "Chiguata", consumo_kwh: 259105.66, usuarios: 5263  },         // 🚨 ~49.2
+  { name: "Jacobo Hunter", consumo_kwh: 88303.9, usuarios: 2768  },   // ~31.9
+  { name: "Mollebaya", consumo_kwh: 399396.94, usuarios: 7816  },         // 🚨 ~51.1
+  { name: "Sabandía", consumo_kwh: 332429.4, usuarios: 7273  },         // 🚨 ~45.7
+  { name: "Quequeña", consumo_kwh: 107282.25, usuarios: 1976  },          // 🚨 ~54.3
+  { name: "Uchumayo", consumo_kwh: 561488.72, usuarios: 14941  },         // ~37.6
+  { name: "Yura", consumo_kwh: 1045877.94, usuarios: 17432  },            // 🚨 ~60.0
 ];
 
 // Agregamos consumo promedio por usuario a cada distrito
