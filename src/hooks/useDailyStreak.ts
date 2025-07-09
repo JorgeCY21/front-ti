@@ -32,6 +32,7 @@ export const useDailyStreak = () => {
 
   return {
     streak: data?.user_profile?.streak ?? 0,
+    user: data,
     isLoading,
     error,
   };

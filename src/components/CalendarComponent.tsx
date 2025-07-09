@@ -9,22 +9,24 @@ import { subDays, format } from "date-fns";
 function CalendarComponent() {
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth());
   const navigate = useNavigate();
-  const { streak, isLoading, error } = useDailyStreak();
+  const { streak, user: userData, isLoading, error } = useDailyStreak();
   const { user } = useAuth();
 
   const currentYear = new Date().getFullYear();
   const [year] = useState<number>(currentYear);
 
+  
   const { data: metas, isLoading: loadingMetas } = useGoalsByUser(user?.id ?? "");
   const { data: consumoMensual, isLoading: loadingConsumo } = useMonthlyKwhFromDaily(
     user?.id ?? "",
     selectedMonth,
     year
   );
-
+  
+  console.log(metas)
   const monthNames = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    "July", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
   const selectedMonthName = monthNames[selectedMonth];
@@ -40,7 +42,7 @@ function CalendarComponent() {
   const goalKwh = metaActual?.goal_kwh ?? 0;
   const consumoTotal = consumoMensual?.total_kwh ?? 0;
 
-  const tarifaKwh = goalKwh > 0 ? metaTotal / goalKwh : 0;
+  const tarifaKwh = userData?.district?.fee_kwh ?? 0
   const costoActual = consumoTotal * tarifaKwh;
   const logrado = costoActual <= metaTotal;
 
